@@ -1,0 +1,11 @@
+#!/bin/bash
+NUMUSERS=20
+for i in $(seq -w 1 $NUMUSERS)
+do
+	username=g$i
+	# too slow
+	#newpass=$(apg | head -n1)
+	newpass=$(openssl rand -base64 12)
+        echo $newpass | passwd --stdin $username > /dev/null 2>&1
+	echo "$username:$newpass"
+done

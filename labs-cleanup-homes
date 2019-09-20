@@ -1,0 +1,17 @@
+#!/bin/bash
+NUMUSERS=20
+for i in $(seq -w 1 $NUMUSERS)
+do
+	username=g$i
+	homedir=$(getent passwd $username | cut -d: -f6)
+	pkill -9 -u $username
+	if [[ ! -z "$homedir" ]] && [ -d "$homedir" ]; then
+		echo "Cleaning $homedir"
+		find $homedir -mindepth 1 -delete -print
+		cp -r /etc/skel/. $homedir/
+		mkdir $homedir/work
+		#ln -fsT /scratch/$username/ $homedir/.jupyterhub-tree/scratch/
+		chown -R $username:$username $homedir/
+	fi
+
+done
