@@ -1,5 +1,4 @@
 #!/bin/bash
-NUMUSERS=20
 for i in $(lid -ng zarco-data)
 do
 	username=$i
@@ -7,11 +6,13 @@ do
 	homedir=$(getent passwd $username | cut -d: -f6)
 	if [[ ! -z "$homedir" ]] && [ -d "$homedir" ]; then
 		echo "adding jupyterhub-tree to $homedir"
-		mkdir /home/$username/.jupyterhub-tree/
-		ln -fsT /home/$username/ $homedir/.jupyterhub-tree/home
-		mkdir  $homedir/work
-		ln -fsT /home/$username/work/ $homedir/.jupyterhub-tree/work
+		mkdir $homedir/$username/.jupyterhub-tree/
+		ln -fsT $homedir/$username/ $homedir/.jupyterhub-tree/home
+		mkdir  $homedir/work/
+		chown $username:$username $homedir/work/
+		ln -fsT $homedir/$username/work/ $homedir/.jupyterhub-tree/work
 		mkdir /scratch/$username/
+		chown $username:$username /scratch/$username/
 		ln -fsT /scratch/$username/ $homedir/.jupyterhub-tree/scratch
 		chown -R $username:$username $homedir/.jupyterhub-tree/
 	fi

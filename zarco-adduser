@@ -1,0 +1,18 @@
+#!/bin/bash
+username=$1
+password=$(apg -n1)
+echo $username:$password
+adduser $username
+echo $password | passwd $username --stdin
+usermod -a -G zarco-users $username
+rocks sync users
+homedir=$(getent passwd $username | cut -d: -f6)
+if [[ ! -z "$homedir" ]] && [ -d "$homedir" ]; then
+	echo "adding jupyterhub-tree to $homedir"
+	mkdir $homedir/.jupyterhub-tree/
+	ln -fsT $homedir $homedir/.jupyterhub-tree/home
+	mkdir  $homedir/work/
+	chown $username:$username $homedir/work/
+	ln -fsT $homedir/work/ $homedir/.jupyterhub-tree/work
+	chown -R $username:$username $homedir/.jupyterhub-tree/
+fi

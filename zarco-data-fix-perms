@@ -1,0 +1,12 @@
+#!/bin/bash
+for i in $(lid -ng zarco-data)
+do
+	username=$i
+	echo $username
+	homedir=$(getent passwd $username | cut -d: -f6)
+	if [[ ! -z "$homedir" ]] && [ -d "$homedir" ]; then
+		chown $username:$username $homedir/work/
+		chown -R $username:$username $homedir/.jupyterhub-tree/
+	fi
+
+done
